@@ -1,9 +1,18 @@
 package com.travel_app.travel.service;
 
+import com.travel_app.travel.dto.UserDto;
 import com.travel_app.travel.entity.UserEntity;
 
+import java.io.File;
+
 public interface IUserService {
-    UserEntity save(UserEntity userEntity);
-    UserEntity findUserByUsername(String username);
+    UserDto save(UserDto userDto);
+    UserDto findUserByUsername(String username);
+    UserDto findUserByEmail(String email);
     boolean checkPassword(String plainPassword, String hashedPassword);
+
+    UserDto update(UserDto userDto);
+
+    void delete(long id);
+    void saveAvatar(long id, String filePath);
 }

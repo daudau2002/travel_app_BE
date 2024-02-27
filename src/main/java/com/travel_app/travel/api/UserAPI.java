@@ -1,5 +1,6 @@
 package com.travel_app.travel.api;
 
+import com.travel_app.travel.dto.UserDto;
 import com.travel_app.travel.dto.UsernameExistsException;
 import com.travel_app.travel.entity.UserEntity;
 import com.travel_app.travel.service.IUserService;
@@ -15,32 +16,39 @@ public class UserAPI {
     private IUserService userService;
 
     @PostMapping(value = "/user")
-    public ResponseEntity<String> createUser(@RequestBody UserEntity userEntity) {
+    public ResponseEntity<String> createUser(@RequestBody UserDto userDto) {
         try {
-            userService.save(userEntity);
+            userService.save(userDto);
             return ResponseEntity.ok("User registered successfully");
         }catch (UsernameExistsException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
+    @PutMapping(value = "edit/{id}")
+    public ResponseEntity<String> editUser(@RequestBody UserDto userDto, @PathVariable("id") long id) {
+        try {
+            userDto.setId(id);
+            userService.update(userDto);
+            return ResponseEntity.ok("User updated successfully");
+        }catch (UsernameExistsException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping(value = "delete/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        try {
+            userService.delete(id);
+            return ResponseEntity.ok("User deleted successfully");
+        }catch (UsernameExistsException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     @GetMapping(value = "/getUserByUsername")
-    public UserEntity findOneUser(@RequestParam String username){
+    public UserDto findOneUser(@RequestParam String username){
         return userService.findUserByUsername(username);
     }
 
-    @PostMapping("/checkLogin")
-    public ResponseEntity<?> checkLogin(@RequestParam String username, @RequestParam String password) {
-        UserEntity user = userService.findUserByUsername(username);
-        if (user != null) {
-            String matkhau = user.getPassword();
-            if (userService.checkPassword(password, matkhau)) {
-                return ResponseEntity.ok(user);
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password");
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
-        }
-    }
 }
