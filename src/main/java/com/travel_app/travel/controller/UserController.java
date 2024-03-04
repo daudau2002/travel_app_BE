@@ -1,7 +1,10 @@
 package com.travel_app.travel.controller;
 
+import com.travel_app.travel.converter.UserConverter;
+import com.travel_app.travel.dto.Root;
 import com.travel_app.travel.dto.UserDto;
 import com.travel_app.travel.service.impl.UserService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Map;
 
 
 @CrossOrigin
@@ -16,6 +20,8 @@ import java.util.Base64;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserConverter userConverter;
 
     @PostMapping("/loginWithEmail")
     public ResponseEntity<?> checkLogin(@RequestParam String email, @RequestParam String password) {
@@ -31,6 +37,17 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
         }
     }
+
+    @GetMapping("/loginWithGoogle")
+    public ResponseEntity<?> currentUser(OAuth2AuthenticationToken oAuth2AuthenticationToken) throws IOException {
+        Root root = userService.toPerson(oAuth2AuthenticationToken.getPrincipal().getAttributes());
+        UserDto userDto = userConverter.toDto(root);
+        if (userService.isEmailUnique(userDto.getEmail())) {
+            userService.save(userDto);
+        }
+        return ResponseEntity.ok(userDto);
+    }
+
 
 
     @PostMapping("/uploadAvatar/{userId}")

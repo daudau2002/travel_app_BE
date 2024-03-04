@@ -1,9 +1,14 @@
 package com.travel_app.travel.converter;
 
+import com.travel_app.travel.dto.Root;
 import com.travel_app.travel.dto.UserDto;
 import com.travel_app.travel.entity.UserEntity;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,5 +64,21 @@ public class UserConverter {
             userDtoList.add(toDto(userEntity));
         }
         return userDtoList;
+    }
+
+    public UserDto toDto(Root root) throws IOException {
+        UserDto userDto = new UserDto();
+        userDto.setEmail(root.getEmail());
+        userDto.setFirstName(root.getName());
+        userDto.setAvatar(convertImageToBase64(root.getPicture()));
+        return userDto;
+    }
+
+    public String convertImageToBase64(String imageUrl) throws IOException {
+        URL url = new URL(imageUrl);
+        try (InputStream inputStream = url.openStream()) {
+            byte[] bytes = inputStream.readAllBytes();
+            return Base64.encodeBase64String(bytes);
+        }
     }
 }

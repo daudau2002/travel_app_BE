@@ -1,6 +1,7 @@
 package com.travel_app.travel.service.impl;
 
 import com.travel_app.travel.converter.UserConverter;
+import com.travel_app.travel.dto.Root;
 import com.travel_app.travel.dto.UserDto;
 import com.travel_app.travel.dto.UsernameExistsException;
 import com.travel_app.travel.repository.UserRepository;
@@ -12,6 +13,7 @@ import com.travel_app.travel.entity.UserEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserService implements IUserService {
@@ -21,10 +23,7 @@ public class UserService implements IUserService {
     @Autowired
     private UserConverter userConverter;
     private final int BCRYPT_WORKLOAD = 12;
-
-    public boolean isUsernameUnique(String username) {
-        return !userRepository.existsByUsername(username);
-    }
+    @Override
     public boolean isEmailUnique(String email) {
         return !userRepository.existsByEmail(email);
     }
@@ -66,6 +65,15 @@ public class UserService implements IUserService {
         List<UserEntity> userEntityList = userRepository.findAll();
         List<UserDto> userDtoList = userConverter.toDtoList(userEntityList);
         return userDtoList;
+    }
+
+    @Override
+    public Root toPerson(Map<String, Object> map) {
+        Root root = new Root();
+        root.setEmail((String) map.get("email"));
+        root.setPicture((String) map.get("picture"));
+        root.setName((String) map.get("name"));
+        return root;
     }
 
     @Override
