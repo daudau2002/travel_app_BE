@@ -4,6 +4,9 @@ import com.travel_app.travel.dto.UserDto;
 import com.travel_app.travel.entity.UserEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public class UserConverter {
     public UserEntity toEntity (UserDto dto) {
@@ -48,5 +51,13 @@ public class UserConverter {
         entity.setGoogleId(dto.getGoogleId());
         entity.setAvatar(dto.getAvatar());
         return entity;
+    }
+
+    public List<UserDto> toDtoList(List<UserEntity> userEntityList) {
+        List<UserDto> userDtoList = new ArrayList<>();
+        for (UserEntity userEntity : userEntityList) {
+            userDtoList.add(toDto(userEntity));
+        }
+        return userDtoList;
     }
 }

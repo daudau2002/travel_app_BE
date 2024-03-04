@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.travel_app.travel.entity.UserEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService implements IUserService {
 
@@ -57,6 +59,13 @@ public class UserService implements IUserService {
         UserEntity userEntity = userRepository.findOneById(id);
         userEntity.setAvatar(filePath);
         userEntity = userRepository.save(userEntity);
+    }
+
+    @Override
+    public List<UserDto> getAllUser() {
+        List<UserEntity> userEntityList = userRepository.findAll();
+        List<UserDto> userDtoList = userConverter.toDtoList(userEntityList);
+        return userDtoList;
     }
 
     @Override

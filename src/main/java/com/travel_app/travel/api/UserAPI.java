@@ -9,13 +9,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @CrossOrigin
 @RestController
 public class UserAPI {
     @Autowired
     private IUserService userService;
 
-    @PostMapping(value = "/user")
+    @PostMapping(value = "/createUser")
     public ResponseEntity<String> createUser(@RequestBody UserDto userDto) {
         try {
             userService.save(userDto);
@@ -25,7 +27,7 @@ public class UserAPI {
         }
     }
 
-    @PutMapping(value = "edit/{id}")
+    @PutMapping(value = "editUser/{id}")
     public ResponseEntity<String> editUser(@RequestBody UserDto userDto, @PathVariable("id") long id) {
         try {
             userDto.setId(id);
@@ -36,7 +38,7 @@ public class UserAPI {
         }
     }
 
-    @DeleteMapping(value = "delete/{id}")
+    @DeleteMapping(value = "deleteUser/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         try {
             userService.delete(id);
@@ -47,8 +49,21 @@ public class UserAPI {
     }
 
     @GetMapping(value = "/getUserByUsername")
-    public UserDto findOneUser(@RequestParam String username){
+    public UserDto findUserByUsername(@RequestParam String username){
         return userService.findUserByUsername(username);
     }
 
+    @GetMapping(value = "/getUserByEmail")
+    public UserDto findUserByEmail(@RequestParam String email){
+        return userService.findUserByEmail(email);
+    }
+    @GetMapping(value = "/getAllUser")
+    public ResponseEntity<List<UserDto>> getAllUser() {
+        try {
+            List<UserDto> users = userService.getAllUser();
+            return ResponseEntity.ok(users);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 }

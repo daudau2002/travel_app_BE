@@ -4,6 +4,7 @@ import com.travel_app.travel.dto.UserDto;
 import com.travel_app.travel.entity.UserEntity;
 
 import java.io.File;
+import java.util.List;
 
 public interface IUserService {
     UserDto save(UserDto userDto);
@@ -15,4 +16,5 @@ public interface IUserService {
 
     void delete(long id);
     void saveAvatar(long id, String filePath);
+    List<UserDto> getAllUser();
 }
